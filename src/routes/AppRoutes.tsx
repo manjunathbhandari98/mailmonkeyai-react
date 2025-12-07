@@ -32,8 +32,8 @@ const AppRoutes = () => {
 
           <Route element={<AppLayout />}>
             <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/generate" element={<EmailGenerator />} />
-            <Route path="/improve" element={<ImproveEmail />} />
+            <Route path="/generate-email" element={<EmailGenerator />} />
+            <Route path="/improve-email" element={<ImproveEmail />} />
             <Route path="/templates" element={<Templates />} />
             <Route path="/history" element={<History />} />
             <Route path="/settings" element={<Settings />} />

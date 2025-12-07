@@ -141,21 +141,25 @@ const Register = () => {
         </div>
 
         {/* CONFIRN PASSWORD */}
+        {/* CONFIRM PASSWORD */}
         <div className="flex flex-col gap-1">
-          <label htmlFor="password" className="text-gray-700 font-medium">
+          <label
+            htmlFor="confirmPassword"
+            className="text-gray-700 font-medium"
+          >
             Confirm Password
           </label>
 
           <div className="rounded-xl relative flex border border-gray-300">
             <input
               type={showConfirmPassword ? "text" : "password"}
-              id="password"
+              id="confirmPassword"
               placeholder="********"
               className="border-none outline-none p-3 w-full"
-              {...register("password")}
+              {...register("confirmPassword")}
             />
 
-            {/* Toggle Password */}
+            {/* Toggle Confirm Password */}
             <button
               type="button"
               onClick={() => setShowConfirmPassword((prev) => !prev)}
@@ -165,8 +169,10 @@ const Register = () => {
             </button>
           </div>
 
-          {touchedFields.password && errors.password && (
-            <p className="text-red-600 text-xs">{errors.password.message}</p>
+          {touchedFields.confirmPassword && errors.confirmPassword && (
+            <p className="text-red-600 text-xs">
+              {errors.confirmPassword.message}
+            </p>
           )}
         </div>
 

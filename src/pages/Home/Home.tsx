@@ -6,14 +6,30 @@ import Hero from "./Sections/Hero";
 import Pricing from "./Sections/Pricing";
 
 const Home = () => {
+  const scrollToSection = (sectionId: string) => {
+    const section = document.getElementById(sectionId);
+    if (section) {
+      section.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   return (
     <div className="flex flex-col gap-2">
-      <PublicHeader />
+      <PublicHeader onOptionSelect={scrollToSection} />
       <div className="pt-24">
         <Hero />
-        <Features />
-        <Demo />
-        <Pricing />
+        <section id="features">
+          {" "}
+          <Features />
+        </section>
+        <section id="demo">
+          {" "}
+          <Demo />
+        </section>
+        <section id="pricing">
+          <Pricing />
+        </section>
+
         <Footer />
       </div>
     </div>

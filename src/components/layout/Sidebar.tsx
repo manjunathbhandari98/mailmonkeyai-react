@@ -1,5 +1,5 @@
 const Sidebar = () => {
-  return <div>Sidebar</div>;
+  return <div className="flex md:hidden">Sidebar</div>;
 };
 
 export default Sidebar;

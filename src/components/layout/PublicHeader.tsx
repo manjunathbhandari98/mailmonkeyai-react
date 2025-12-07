@@ -2,13 +2,17 @@ import { Link } from "react-router-dom";
 import Button from "../common/Button";
 import Logo from "../common/Logo";
 
-const PublicHeader = () => {
+const PublicHeader = ({
+  onOptionSelect,
+}: {
+  onOptionSelect: (sectionId: string) => void;
+}) => {
   const navigateToRegister = () => {};
 
   const navoOptions = [
-    { option: "Features", link: "#features" },
-    { option: "Demo", link: "#demo" },
-    { option: "Pricing", link: "#pricing" },
+    { option: "Features", link: "features" },
+    { option: "Demo", link: "demo" },
+    { option: "Pricing", link: "pricing" },
   ];
 
   return (
@@ -18,13 +22,13 @@ const PublicHeader = () => {
 
         <div className="flex items-center gap-2">
           {navoOptions.map((nav, index) => (
-            <Link
+            <div
               key={index}
-              to="/"
+              onClick={() => onOptionSelect(nav.link)}
               className="px-4 py-2 text-gray-700 text-sm font-bold hover:text-blue-600 transition cursor-pointer"
             >
               {nav.option}
-            </Link>
+            </div>
           ))}
 
           <Link

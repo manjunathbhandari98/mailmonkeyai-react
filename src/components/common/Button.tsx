@@ -47,7 +47,7 @@ export default function Button({
       disabled={isDisabled}
       onClick={onClick}
       className={clsx(
-        "flex items-center justify-center gap-2 rounded-xl transition cursor-pointer px-4 py-2",
+        "flex items-center justify-center gap-2 rounded-lg transition cursor-pointer px-4 py-2",
         variantClasses[variant],
         customClass
       )}

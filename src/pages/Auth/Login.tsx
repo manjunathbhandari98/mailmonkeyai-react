@@ -5,6 +5,10 @@ import { Link, useNavigate } from "react-router-dom";
 import { z } from "zod";
 import Button from "../../components/common/Button";
 import Logo from "../../components/common/Logo";
+import { useToast } from "../../hooks/useToast";
+import { loginUser } from "../../services/authService";
+import { setUser } from "../../store/auth.slice";
+import { useAppDispatch } from "../../store/hook";
 
 const loginSchema = z.object({
   email: z.email("Enter a valid email"),
@@ -15,6 +19,8 @@ type LoginFormData = z.infer<typeof loginSchema>;
 
 export default function Login() {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const toast = useToast();
   const [showPassword, setShowPassword] = useState(false);
 
   // --------------------
@@ -30,11 +36,14 @@ export default function Login() {
   });
 
   const onSubmit = async (data: LoginFormData) => {
-    console.log("Form Data:", data);
-
-    // TODO: call login API with Redux Toolkit
-    // await dispatch(loginUser(data));
-    navigate("/dashboard");
+    try {
+      const user = await loginUser(data);
+      dispatch(setUser(user));
+      toast.show("success", "Logged in successfully");
+      navigate("/dashboard");
+    } catch (error) {
+      console.error("Failed to load error", error);
+    }
   };
 
   return (
