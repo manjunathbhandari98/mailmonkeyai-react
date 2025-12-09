@@ -2,8 +2,13 @@ import { useState } from "react";
 import Button from "../../components/common/Button";
 import SettingToggle from "../../components/common/SettingToggle";
 import PageHeader from "../../components/layout/PageHeader";
+import ConfirmationModal from "../../modals/ConfirmationModal";
+import { logoutUser } from "../../services/authService";
+import { clearUser } from "../../store/auth.slice";
+import { useAppDispatch } from "../../store/hook";
 
 const Settings = () => {
+  const dispatch = useAppDispatch();
   // ----------------------
   // STATE
   // ----------------------
@@ -21,6 +26,8 @@ const Settings = () => {
   const [generationCompleteNotification, setGenerationCompleteNotification] =
     useState(true);
   const [weeklySummaryNotification, setWeeklySummaryNotification] =
+    useState(false);
+  const [logoutConfirmationModalOpen, setLogoutConfirmationModalOpen] =
     useState(false);
 
   const planInfo = {
@@ -60,8 +67,21 @@ const Settings = () => {
     console.log("Cancelled");
   };
 
+  const OpenConfirmationModal = () => {
+    setLogoutConfirmationModalOpen(true);
+  };
+
+  const closeConfimationModal = () => {
+    setLogoutConfirmationModalOpen(false);
+  };
+
   const logout = () => {
-    console.log("Logged out");
+    try {
+      logoutUser();
+      dispatch(clearUser());
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const copyKey = () => {
@@ -331,10 +351,17 @@ const Settings = () => {
               <p className="text-red-500 text-sm">Sign out from your account</p>
             </div>
 
-            <Button label="Logout" variant="danger" onClick={logout} />
+            <Button
+              label="Logout"
+              variant="danger"
+              onClick={OpenConfirmationModal}
+            />
           </div>
         </div>
       </div>
+      {logoutConfirmationModalOpen && (
+        <ConfirmationModal onClose={closeConfimationModal} onLogout={logout} />
+      )}
     </div>
   );
 };

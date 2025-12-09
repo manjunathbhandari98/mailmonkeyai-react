@@ -16,8 +16,8 @@ const AuthNavbar = () => {
   };
 
   const getInitials = () => {
-    if (!user?.fullName) return "";
-    return user.fullName
+    if (!user?.name) return "";
+    return user.name
       .split(" ")
       .map((n) => n.charAt(0).toUpperCase())
       .join("");
@@ -77,7 +77,7 @@ const AuthNavbar = () => {
             </div>
 
             <div className="flex flex-col text-sm">
-              <h2 className="font-semibold">{user?.fullName}</h2>
+              <h2 className="font-semibold">{user?.name}</h2>
               <p className="text-xs text-gray-800">{user?.email}</p>
             </div>
           </div>

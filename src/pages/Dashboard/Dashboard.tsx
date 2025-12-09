@@ -1,6 +1,5 @@
 import { Clock, FileText, Mail, Users } from "lucide-react";
 import FeatureCard from "../../components/common/FeatureCard";
-import Loader from "../../components/common/Loader/Loader";
 import QuickActions from "../../components/features/QuickActions";
 import RecentEmails from "../../components/features/RecentEmails";
 import AuthNavbar from "../../components/layout/AuthNavbar";
@@ -9,7 +8,6 @@ import type { RootState } from "../../store/store";
 
 const Dashboard = () => {
   const user = useAppSelector((state: RootState) => state.auth.user);
-  const loading = useAppSelector((state: RootState) => state.auth.loading);
 
   const analytics = [
     {
@@ -34,17 +32,13 @@ const Dashboard = () => {
     },
   ];
 
-  if (loading) {
-    return <Loader />;
-  }
-
   return (
     <>
       <AuthNavbar />
 
       <div className="pt-10 md:pt-24 w-full md:max-w-7xl mx-auto bg-gray-50">
         <h2 className="text-2xl md:text-4xl font-extrabold">
-          Welcome back, {user?.fullName}
+          Welcome back, {user?.name || ""}
         </h2>
         <h4 className="text-sm md:text-lg md:font-medium mt-3 text-gray-600">
           Ready to create amazing emails?

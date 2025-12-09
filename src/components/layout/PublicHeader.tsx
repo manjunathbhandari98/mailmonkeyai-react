@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Button from "../common/Button";
 import Logo from "../common/Logo";
 
@@ -7,7 +7,11 @@ const PublicHeader = ({
 }: {
   onOptionSelect: (sectionId: string) => void;
 }) => {
-  const navigateToRegister = () => {};
+  const naviagate = useNavigate();
+
+  const navigateToRegister = () => {
+    naviagate("/register");
+  };
 
   const navoOptions = [
     { option: "Features", link: "features" },

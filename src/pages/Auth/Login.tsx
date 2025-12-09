@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -6,12 +7,12 @@ import { z } from "zod";
 import Button from "../../components/common/Button";
 import Logo from "../../components/common/Logo";
 import { useToast } from "../../hooks/useToast";
-import { loginUser } from "../../services/authService";
+import { getProfileInfo, loginUser } from "../../services/authService";
 import { setUser } from "../../store/auth.slice";
 import { useAppDispatch } from "../../store/hook";
 
 const loginSchema = z.object({
-  email: z.email("Enter a valid email"),
+  email: z.string().email("Enter a valid email"),
   password: z.string().min(6, "Password must be at least 6 characters"),
 });
 
@@ -23,9 +24,6 @@ export default function Login() {
   const toast = useToast();
   const [showPassword, setShowPassword] = useState(false);
 
-  // --------------------
-  // React Hook Form Setup
-  // --------------------
   const {
     register,
     handleSubmit,
@@ -37,12 +35,17 @@ export default function Login() {
 
   const onSubmit = async (data: LoginFormData) => {
     try {
-      const user = await loginUser(data);
-      dispatch(setUser(user));
+      await loginUser(data);
+
+      // Fetch profile after successful login
+      const profile = await getProfileInfo();
+      dispatch(setUser(profile));
+
       toast.show("success", "Logged in successfully");
       navigate("/dashboard");
-    } catch (error) {
-      console.error("Failed to load error", error);
+    } catch (error: any) {
+      toast.show("error", error?.response?.data?.message || "Failed to login");
+      console.error(error);
     }
   };
 
@@ -64,9 +67,7 @@ export default function Login() {
         </p>
       </div>
 
-      {/* --------------------
-          FORM
-      ---------------------*/}
+      {/* FORM */}
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="flex flex-col gap-5 w-full text-sm"
@@ -196,7 +197,7 @@ export default function Login() {
 
       {/* Footer */}
       <p className="text-gray-600 text-sm">
-        Don’t have an account?
+        Don't have an account?
         <Link
           to="/register"
           className="text-blue-600 font-semibold cursor-pointer"

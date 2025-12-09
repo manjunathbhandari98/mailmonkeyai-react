@@ -43,4 +43,16 @@ export type EmailType = {
   actions?: string[];
 };
 
+export interface EmailGenerationRequest {
+  reciever:string;
+  sender:string;
+  emailType:string;
+  tone:string;
+  subject:string;
+  content:string;
+}
 
+export interface EmailImprovementRequest {
+  originalEmail:string;
+  improvementType:string;
+}

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOffIcon } from "lucide-react";
 import { useState } from "react";
@@ -6,13 +7,15 @@ import { Link, useNavigate } from "react-router-dom";
 import { z } from "zod";
 import Button from "../../components/common/Button";
 import Logo from "../../components/common/Logo";
+import { useToast } from "../../hooks/useToast";
+import { registerUser } from "../../services/authService";
 
 //----------------------
 // Zod Schema
 //---------------------
 const registerSchema = z
   .object({
-    fullName: z.string().min(2, "Full name must be at least 2 characters"),
+    name: z.string().min(2, "Full name must be at least 2 characters"),
     email: z.email("Enter a valid email"),
     password: z.string().min(6, "Password must be at least 6 characters"),
     confirmPassword: z
@@ -28,6 +31,7 @@ type RegisterFormData = z.infer<typeof registerSchema>;
 
 const Register = () => {
   const navigate = useNavigate();
+  const toast = useToast();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
@@ -41,11 +45,13 @@ const Register = () => {
   });
 
   const onSubmit = async (data: RegisterFormData) => {
-    console.log("Form Data:", data);
-
-    // TODO: call login API with Redux Toolkit
-    // await dispatch(loginUser(data));
-    navigate("/login");
+    try {
+      await registerUser(data);
+      toast.show("success", "User Registered Successfully");
+      navigate("/login");
+    } catch (error: any) {
+      toast.show("error", error.message);
+    }
   };
 
   return (
@@ -74,20 +80,20 @@ const Register = () => {
       >
         {/* FULL NAME */}
         <div className="flex flex-col gap-1">
-          <label htmlFor="fullname" className="text-gray-700 font-medium">
+          <label htmlFor="name" className="text-gray-700 font-medium">
             Full Name
           </label>
 
           <input
-            type="fullName"
-            id="fullName"
+            type="name"
+            id="name"
             placeholder="John Doe"
             className="p-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-            {...register("fullName")}
+            {...register("name")}
           />
 
-          {touchedFields.fullName && errors.fullName && (
-            <p className="text-red-600 text-xs">{errors.fullName.message}</p>
+          {touchedFields.name && errors.name && (
+            <p className="text-red-600 text-xs">{errors.name.message}</p>
           )}
         </div>
 

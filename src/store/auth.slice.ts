@@ -1,21 +1,17 @@
 import { createSlice } from "@reduxjs/toolkit";
+import type { User } from "../types";
 
-export type User = {
-  id?: string;
-  fullName?: string;
-  email?: string;
-};
 
 type AuthState = {
   user: User | null;
   isAuthenticated: boolean;
-  loading: boolean;   // 👈 NEW
+  loading: boolean;   
 };
 
 const initialState: AuthState = {
   user: null,
   isAuthenticated: false,
-  loading: true,      // 👈 start loading on initial app load
+  loading: true,      
 };
 
 const authSlice = createSlice({

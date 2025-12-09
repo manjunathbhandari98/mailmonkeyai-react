@@ -3,6 +3,8 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Loader from "../components/common/Loader/Loader";
 import AppLayout from "../components/layout/AppLayout";
 import PublicLayout from "../components/layout/PublicLayout";
+import ProtectedRoute from "./ProtectedRoutes";
+import PublicRoute from "./PublicRoute";
 
 // Lazy-loaded pages
 const Home = lazy(() => import("../pages/Home/Home"));
@@ -15,28 +17,53 @@ const ImproveEmail = lazy(() => import("../pages/Improve/EmailImprover"));
 const Templates = lazy(() => import("../pages/Templates/Templates"));
 const History = lazy(() => import("../pages/History/History"));
 const Settings = lazy(() => import("../pages/Settings/Settings"));
-
 const NotFound = lazy(() => import("../pages/NotFound"));
 
+// AppRoutes.tsx
 const AppRoutes = () => {
   return (
     <BrowserRouter>
       <Suspense fallback={<Loader />}>
         <Routes>
+          {/* Public Routes */}
           <Route element={<PublicLayout />}>
             <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route
+              path="/login"
+              element={
+                <PublicRoute>
+                  <Login />
+                </PublicRoute>
+              }
+            />
+            <Route
+              path="/register"
+              element={
+                <PublicRoute>
+                  <Register />
+                </PublicRoute>
+              }
+            />
+            <Route
+              path="/forgot-password"
+              element={
+                <PublicRoute>
+                  <ForgotPassword />
+                </PublicRoute>
+              }
+            />
           </Route>
 
-          <Route element={<AppLayout />}>
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/generate-email" element={<EmailGenerator />} />
-            <Route path="/improve-email" element={<ImproveEmail />} />
-            <Route path="/templates" element={<Templates />} />
-            <Route path="/history" element={<History />} />
-            <Route path="/settings" element={<Settings />} />
+          {/* Protected Routes - Changed structure */}
+          <Route element={<ProtectedRoute />}>
+            <Route element={<AppLayout />}>
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/generate-email" element={<EmailGenerator />} />
+              <Route path="/improve-email" element={<ImproveEmail />} />
+              <Route path="/templates" element={<Templates />} />
+              <Route path="/history" element={<History />} />
+              <Route path="/settings" element={<Settings />} />
+            </Route>
           </Route>
 
           {/* Catch-all */}
