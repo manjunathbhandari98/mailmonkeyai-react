@@ -359,9 +359,19 @@ const Settings = () => {
           </div>
         </div>
       </div>
-      {logoutConfirmationModalOpen && (
+      {/* {logoutConfirmationModalOpen && (
         <ConfirmationModal onClose={closeConfimationModal} onLogout={logout} />
-      )}
+   
+      )} */}
+      <ConfirmationModal
+        isOpen={logoutConfirmationModalOpen}
+        title="Logout Confirmation"
+        message="Are you sure you want to logout?"
+        confirmLabel="Logout"
+        variant="danger"
+        onConfirm={logout}
+        onClose={closeConfimationModal}
+      />
     </div>
   );
 };

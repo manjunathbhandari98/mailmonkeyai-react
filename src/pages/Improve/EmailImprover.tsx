@@ -200,7 +200,7 @@ This email has been enhanced using MailMonkey AI
           <div className="flex flex-col gap-1 my-4">
             <textarea
               rows={10}
-              className="p-4 sm:p-5 text-sm leading-7 border border-gray-300 rounded-xl bg-white roboto-serif
+              className="p-4 sm:p-5 text-sm roboto-serif leading-7 border border-gray-300 rounded-xl bg-white roboto-serif
               focus:ring-2 focus:ring-blue-500 outline-none resize-none"
               value={generatedEmail}
               readOnly

@@ -1,4 +1,3 @@
-import { ArrowDown, Bookmark, FileText, WandSparkles } from "lucide-react";
 import Button from "../../components/common/Button";
 import type { EmailType } from "../../types";
 
@@ -6,25 +5,13 @@ type EmailModalProps = {
   email: EmailType;
   onClose: () => void;
   copyEmail: () => void;
-  downloadEmail: () => void;
-  saveEmail: () => void;
-  regenerate: () => void;
-  handleRegenerate: () => void;
 };
 
-const ViewEmailModal = ({
-  email,
-  onClose,
-  copyEmail,
-  downloadEmail,
-  saveEmail,
-  regenerate,
-  handleRegenerate,
-}: EmailModalProps) => {
+const ViewEmailModal = ({ email, onClose, copyEmail }: EmailModalProps) => {
   return (
     <>
       <div
-        className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-[999]"
+        className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-400"
         onClick={onClose}
       >
         {/* Modal Box */}
@@ -57,18 +44,11 @@ const ViewEmailModal = ({
           </div>
 
           {/* Action Toolbar */}
-          <div className="flex items-center justify-between mt-4 border-b pb-3">
-            <div className="flex items-center gap-5 text-gray-600">
-              <FileText onClick={copyEmail} />
-              <ArrowDown onClick={downloadEmail} />
-              <Bookmark onClick={saveEmail} />
-              <WandSparkles onClick={regenerate} />
-            </div>
-
+          <div className="flex  mt-4 border-b pb-3">
             <Button
-              label="Use This"
-              onClick={handleRegenerate}
-              customClass="px-4 py-2"
+              label="Copy Email"
+              onClick={copyEmail}
+              customClass="px-4 py-2 flex-end"
             />
           </div>
 

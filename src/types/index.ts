@@ -56,3 +56,13 @@ export interface EmailImprovementRequest {
   originalEmail:string;
   improvementType:string;
 }
+
+export interface EmailHistory{
+  id:string;
+  subject:string;
+  content:string;
+  tone:string;
+  type:string;
+  userId:string;
+  createdAt:string;
+}

@@ -1,12 +1,12 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Copy, Download, Save, Sparkles, WandSparkles } from "lucide-react";
-import { useRef, useState } from "react";
+import { Copy, CopyIcon, Download, Sparkles, WandSparkles } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import Button from "../../components/common/Button";
 import PageHeader from "../../components/layout/PageHeader";
 import { useToast } from "../../hooks/useToast";
-import { generateEmail } from "../../services/emailService";
+import { generateEmail, saveGeneratedEmail } from "../../services/emailService";
 
 const emailGenerationSchema = z.object({
   receiver: z.string().min(1, "Receiver is required"),
@@ -30,60 +30,144 @@ const EmailGenerator = () => {
     mode: "onTouched",
   });
   const toast = useToast();
-
-  const [generatedEmail, setGeneratedEmail] = useState("");
+  const contentRef = useRef<HTMLTextAreaElement | null>(null);
+  const [generatedSubject, setGeneratedSubject] = useState("");
+  const [generatedContent, setGeneratedContent] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
+  const MIN_ROWS = 20;
 
+  const ROW_HEIGHT = 28;
+
+  const lastFormDataRef = useRef<EmailGenerationFormData | null>(null);
+
+  // -----------------------------------------------------
+  // PARSE EMAIL RESPONSE (Subject + Content Extraction)
+  // -----------------------------------------------------
+  const parseEmailResponse = (text: string) => {
+    const lines = text.trim().split("\n");
+    let subject = "";
+    let content = "";
+
+    const subjectLine = lines.find((l) =>
+      l.toLowerCase().startsWith("subject:")
+    );
+
+    if (subjectLine) {
+      subject = subjectLine.replace(/Subject:/i, "").trim();
+      const index = lines.indexOf(subjectLine);
+      content = lines
+        .slice(index + 1)
+        .join("\n")
+        .trim();
+    } else {
+      // No subject found – treat everything as content
+      content = text.trim();
+    }
+
+    return { subject, content };
+  };
+
+  // ADJUST HEIGHT
+  const adjustHeight = () => {
+    const el = contentRef.current;
+    if (!el) return;
+
+    el.style.height = "auto";
+
+    const newHeight = Math.max(MIN_ROWS * ROW_HEIGHT, el.scrollHeight);
+
+    el.style.height = `${newHeight}px`;
+  };
+
+  useEffect(() => {
+    adjustHeight();
+  }, [generatedContent]);
+
+  // -----------------------------------------------------
+  // GENERATE EMAIL
+  // -----------------------------------------------------
+  const onSubmit = async (data: EmailGenerationFormData) => {
+    try {
+      setIsGenerating(true);
+      lastFormDataRef.current = data;
+
+      const res = await generateEmail(data);
+
+      // Extract subject + content from AI response
+      const { subject, content } = parseEmailResponse(res.data.generatedEmail);
+
+      // Update UI states
+      setGeneratedSubject(subject);
+      setGeneratedContent(content);
+
+      // Save directly using parsed values (NOT state!)
+      const saveResponse = {
+        subject,
+        content,
+        type: data.emailType,
+        tone: data.tone,
+      };
+      console.log(saveResponse);
+
+      await saveGeneratedEmail(saveResponse);
+      toast.show("success", "Email generated & saved");
+    } catch (error) {
+      console.error(error);
+      toast.show("error", "Failed to generate email");
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  // -----------------------------------------------------
+  // UTILITIES
+  // -----------------------------------------------------
   const clearForm = () => {
     reset();
-    setGeneratedEmail("");
+    setGeneratedSubject("");
+    setGeneratedContent("");
+    lastFormDataRef.current = null;
   };
 
-  const onCopy = () => {
-    if (!generatedEmail) return;
-    navigator.clipboard.writeText(generatedEmail);
-    toast.show("success", "Email copied to clipboard");
+  const copyFullEmail = () => {
+    if (!generatedContent) return;
+    navigator.clipboard.writeText(
+      `Subject: ${generatedSubject}\n\n${generatedContent}`
+    );
+    toast.show("success", "Full email copied");
   };
 
-  const onDownload = () => {
-    if (!generatedEmail) return;
+  const copySubject = () => {
+    if (!generatedSubject) return;
+    navigator.clipboard.writeText(generatedSubject);
+    toast.show("success", "Subject copied");
+  };
 
-    const blob = new Blob([generatedEmail], { type: "text/plain" });
+  const copyContent = () => {
+    if (!generatedContent) return;
+    navigator.clipboard.writeText(generatedContent);
+    toast.show("success", "Email content copied");
+  };
+
+  const downloadEmail = () => {
+    if (!generatedContent) return;
+
+    const text = `Subject: ${generatedSubject}\n\n${generatedContent}`;
+    const blob = new Blob([text], { type: "text/plain" });
+
     const url = window.URL.createObjectURL(blob);
-
     const a = document.createElement("a");
+
     a.href = url;
-    a.download = "email.txt";
+    a.download = "generated-email.txt";
     a.click();
 
     window.URL.revokeObjectURL(url);
   };
 
-  const onGenerateAgain = () => {
-    if (lastFormDataRef.current) {
-      onSubmit(lastFormDataRef.current);
-    }
+  const regenerate = () => {
+    if (lastFormDataRef.current) onSubmit(lastFormDataRef.current);
   };
-
-  // Store last form input so regenerate works
-  const lastFormDataRef = useRef<EmailGenerationFormData | null>(null);
-
-  const onSave = () => {
-    console.log("Saved:", generatedEmail);
-  };
-
-  const onSubmit = async (data: EmailGenerationFormData) => {
-    try {
-      setIsGenerating(true);
-      const res = await generateEmail(data);
-      setGeneratedEmail(res);
-      toast.show("success", "Email Generated Successfully");
-    } catch (error) {
-      console.error("Failed to Generate Email", error);
-      setIsGenerating(false);
-    }
-  };
-
   return (
     <>
       <PageHeader pageTitle="Generate Email" />
@@ -237,33 +321,73 @@ const EmailGenerator = () => {
             </h1>
 
             <div className="flex items-center justify-between gap-4 text-gray-600">
-              <Copy
-                onClick={onCopy}
+              {/* <Copy
+                onClick={copyContent}
                 className="cursor-pointer hover:text-black"
               />
               <Download
-                onClick={onDownload}
+                onClick={downloadEmail}
                 className="cursor-pointer hover:text-black"
-              />
+              /> */}
               <WandSparkles
-                onClick={onGenerateAgain}
-                className="cursor-pointer hover:text-black"
+                size={20}
+                onClick={regenerate}
+                className="cursor-pointer text-purple-800 hover:text-purple-900"
               />
-              <Save
-                onClick={onSave}
+              {/* <Save
+                onClick={}
                 className="cursor-pointer hover:text-black"
-              />
+              /> */}
             </div>
           </div>
+          <div className="flex items-end gap-3 mb-4">
+            {/* Subject Input */}
+            <div className="flex flex-col w-full">
+              <label className="font-medium text-gray-700 mb-1">Subject</label>
 
+              <div className="flex items-center gap-2">
+                <input
+                  className="flex-1 px-3 py-2 roboto-serif border border-gray-300 rounded-lg bg-white
+                   focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  value={generatedSubject}
+                  readOnly
+                />
+
+                <button
+                  onClick={copySubject}
+                  className="p-2 rounded-lg border border-gray-300 hover:bg-gray-100 
+                   transition flex items-center justify-center"
+                >
+                  <CopyIcon size={18} className="text-gray-600" />
+                </button>
+              </div>
+            </div>
+          </div>
           <div className="flex flex-col gap-1">
             <label className="font-medium text-gray-700">Email Content</label>
-            <textarea
-              rows={24}
-              className="p-4 text-sm leading-6 border border-gray-300 rounded-xl bg-white roboto-serif focus:ring-2 focus:ring-blue-500 outline-none"
-              value={generatedEmail}
-              readOnly
-            ></textarea>
+
+            <div className="relative w-full">
+              {/* Textarea */}
+              <textarea
+                ref={contentRef}
+                className="p-4 text-sm roboto-serif leading-6 border border-gray-300 rounded-xl bg-white 
+                 focus:ring-2 focus:ring-blue-500 outline-none w-full pr-12"
+                value={generatedContent}
+                style={{
+                  minHeight: MIN_ROWS * ROW_HEIGHT,
+                }}
+                readOnly
+              ></textarea>
+
+              {/* Copy Icon */}
+              <button
+                onClick={copyContent}
+                className="absolute top-3 right-3 p-1.5 rounded-md 
+                 text-gray-500 hover:text-black hover:bg-gray-100 transition"
+              >
+                <Copy size={18} />
+              </button>
+            </div>
           </div>
 
           <div className="flex flex-col sm:flex-row gap-3 mt-4 w-full">
@@ -271,14 +395,14 @@ const EmailGenerator = () => {
               label="Copy Email"
               icon={<Copy />}
               customClass="w-full py-3"
-              onClick={onCopy}
+              onClick={copyFullEmail}
             />
             <Button
               label="Download"
               variant="outline"
               icon={<Download />}
               customClass="w-full py-3"
-              onClick={onDownload}
+              onClick={downloadEmail}
             />
           </div>
         </div>
