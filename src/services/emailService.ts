@@ -1,5 +1,5 @@
 import type { EmailGenerationFormData } from "../pages/Generator/EmailGenerator";
-import type { EmailImprovementRequest } from "../types";
+import type { EmailImprovementRequest, SaveEmailRequest } from "../types";
 import api from "./appClient";
 
 export const generateEmail = async (data:EmailGenerationFormData) =>{
@@ -11,11 +11,10 @@ export const improveEmail = async (data:EmailImprovementRequest) =>{
 }
 
 
-export const saveGeneratedEmail = async (data:{
-    subject:string;
-    content:string;
-    type:string;
-    tone:string
-}) =>{
+export const saveGeneratedEmail = async (data:SaveEmailRequest) =>{
     return api.post('/email/save',data);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+}
+
+export const getRecentEmails = () =>{
+    return api.get('/email/recent')
 }

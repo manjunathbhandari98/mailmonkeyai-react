@@ -141,16 +141,8 @@ const History = () => {
                           </span>
                         </div>
 
-                        {/* Preview */}
-                        {/* <p className="text-sm text-gray-600 line-clamp-2">
-                        {item.c}
-                      </p> */}
-
                         {/* Meta */}
                         <div className="flex items-center flex-wrap gap-4 mt-1 text-[11px] sm:text-xs text-gray-500">
-                          {/* <span>{item.wordCount} words</span>
-                        <span>{item.charCount} chars</span>
-                        <span>Version {item.version}</span> */}
                           <span className="hidden sm:inline text-gray-400">
                             •
                           </span>

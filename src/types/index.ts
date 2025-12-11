@@ -66,3 +66,10 @@ export interface EmailHistory{
   userId:string;
   createdAt:string;
 }
+
+export interface SaveEmailRequest{
+subject:string;
+    content:string;
+    type:string;
+    tone:string
+}

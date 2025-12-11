@@ -1,5 +1,4 @@
-import { Bookmark, Heart } from "lucide-react";
-import Button from "../common/Button";
+import { Heart } from "lucide-react";
 
 type TemplateCardProps = {
   title: string;
@@ -47,18 +46,6 @@ const TemplateCard = ({
         <div className="flex items-center gap-1 text-gray-600 text-sm">
           <Heart />
           {likes}
-        </div>
-
-        {/* Actions */}
-        <div className="flex items-center gap-3">
-          {/* Save */}
-          <button className="p-2 rounded-lg cursor-pointer w-8 h-8 flex items-center justify-center hover:bg-blue-600 hover:text-white transition">
-            <Bookmark />
-          </button>
-
-          {/* Use Template */}
-
-          <Button label="Use Template" customClass="px-4 py-2 !text-sm" />
         </div>
       </div>
     </div>

@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Loader from "../components/common/Loader/Loader";
 import AppLayout from "../components/layout/AppLayout";
 import PublicLayout from "../components/layout/PublicLayout";
+import TemplatePreview from "../pages/Templates/TemplatePreview";
 import ProtectedRoute from "./ProtectedRoutes";
 import PublicRoute from "./PublicRoute";
 
@@ -63,6 +64,7 @@ const AppRoutes = () => {
               <Route path="/templates" element={<Templates />} />
               <Route path="/history" element={<History />} />
               <Route path="/settings" element={<Settings />} />
+              <Route path="/templates/:id" element={<TemplatePreview />} />
             </Route>
           </Route>
 

@@ -107,8 +107,6 @@ const EmailGenerator = () => {
         type: data.emailType,
         tone: data.tone,
       };
-      console.log(saveResponse);
-
       await saveGeneratedEmail(saveResponse);
       toast.show("success", "Email generated & saved");
     } catch (error) {
